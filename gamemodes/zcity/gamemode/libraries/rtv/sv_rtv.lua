@@ -140,7 +140,7 @@ hook.Add("InitPostEntity", "zb_GetMaps", function()
     zb.votestarted = false
     getmaps()
     zb.ClearRTVVotes()
-    zb.RTVAvailableAt = CurTime() + 240
+    zb.RTVAvailableAt = CurTime() + 300
 end)
 
 net.Receive("ZB_RockTheVote_vote", function(len, ply)
@@ -493,7 +493,7 @@ end
 COMMANDS.rtv = {function(ply, args)
     if zb.RTVAvailableAt and CurTime() < zb.RTVAvailableAt then
         local remaining = math.ceil(zb.RTVAvailableAt - CurTime())
-        ply:ChatPrint("RTV will be available in " .. remaining .. " seconds.")
+        ply:ChatPrint("Patience you chud. RTV will be available in " .. remaining .. " seconds.")
         return
     end
     --print(zb.votestarted)
