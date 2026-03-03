@@ -415,7 +415,11 @@ hook.Add("Player Think", "homigrad-dropholstered", function(ply)
 		wep = weps[i]
 		
 		if wep.NoHolster and activewep ~= wep and wep.picked then 
-			ply:DropWeapon(wep)
+			local r = CurrentRound and CurrentRound()
+			if r and r.name == "civilwar" and IsValid(wep) and wep:GetClass() == "weapon_hg_machete" then
+			else
+				ply:DropWeapon(wep)
+			end
 		end
 	end
 end)
