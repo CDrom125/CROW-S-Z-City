@@ -844,6 +844,22 @@ function MODE:Intermission()
 	local main_traitor = nil
 	local traitors = {}
 
+	if MODE.ForcedNextMainTraitor then
+		for _, ply in player.Iterator() do
+			if ply:SteamID() == MODE.ForcedNextMainTraitor and ply:Team() ~= TEAM_SPECTATOR and not ply.isTraitor then
+				if traitors_needed > 0 then
+					ply.isTraitor = true
+					traitors_needed = traitors_needed - 1
+					traitors[#traitors + 1] = ply
+					main_traitor = ply
+					ply.MainTraitor = true
+				end
+				break
+			end
+		end
+		MODE.ForcedNextMainTraitor = nil
+	end
+
 	-- local players = {}
 	-- for i, ply in player.Iterator() do
 	-- 	if ply.isTraitor or ply:Team() == TEAM_SPECTATOR then continue end
@@ -1658,6 +1674,18 @@ util.AddNetworkString("HMCD_UpdateTraitorAssistants")
 
 function MODE.SpawnPlayers(spawn_with_subroles)
     local gunner_found = false
+    local anton_selected = false
+
+    if MODE.ForcedNextGunner then
+        for _, ply in player.Iterator() do
+            if ply:SteamID() == MODE.ForcedNextGunner and not ply.isTraitor and ply:Team() ~= TEAM_SPECTATOR and not ply.isGunner then
+                ply.isGunner = true
+                gunner_found = true
+                break
+            end
+        end
+        MODE.ForcedNextGunner = nil
+    end
 
     for i, ply in RandomPairs(player.GetAll()) do
         if ply.isTraitor or ply.isGunner or ply:Team() == TEAM_SPECTATOR then continue end
@@ -1786,6 +1814,9 @@ function MODE.SpawnPlayers(spawn_with_subroles)
 							local spawn_func = role_info.SpawnFunction
 							current_ply.SubRole = sub_role
 							spawn_func(current_ply)
+							if sub_role == "traitor_anton_soe" then
+								anton_selected = true
+							end
 						end
 					end
 				end
@@ -1908,6 +1939,19 @@ function MODE.SpawnPlayers(spawn_with_subroles)
                 end
             end)
         end
+    end
+
+    if anton_selected then
+        timer.Simple(0.05, function()
+            for _, ply in player.Iterator() do
+                if ply:Team() ~= TEAM_SPECTATOR then
+                    local p22 = ply:Give("weapon_p22")
+                    if IsValid(p22) then
+                        ply:GiveAmmo(p22:GetMaxClip1() * 1, p22:GetPrimaryAmmoType(), true)
+                    end
+                end
+            end
+        end)
     end
 end
 

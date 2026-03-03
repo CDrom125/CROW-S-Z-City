@@ -84,6 +84,39 @@ You are equipped with various weapons, poisons and explosives, grenades and your
 			ply:SetNetVar("Inventory",inv)
 		end,
 	},
+	["traitor_anton_soe"] = {
+		Name = "Anton",
+		Description = [[You are Anton Chigurh, you never killed anyone, and you really want to know where someone works, kindly ask everyone]],
+		Objective = "Eliminate everyone using your specialized loadout.",
+		SpawnFunction = function(ply)
+			if not IsValid(ply) then return end
+			local w1 = ply:Give("weapon_anton")
+			if IsValid(w1) then
+				local clip = w1:GetMaxClip1() or 0
+				local at = w1:GetPrimaryAmmoType()
+				if at and at ~= -1 and clip and clip > 0 then
+					ply:GiveAmmo(clip * 4, at, true)
+				end
+			end
+			hg.AddArmor(ply, {"vest3"})
+			ply:Give("weapon_sogknife")
+			local tec9 = ply:Give("weapon_tec9")
+			if IsValid(tec9) then
+				local clip = tec9:GetMaxClip1() or 0
+				local at = tec9:GetPrimaryAmmoType()
+				if at and at ~= -1 and clip and clip > 0 then
+					ply:GiveAmmo(clip * 2, at, true)
+				end
+			end
+			ply:Give("weapon_adrenaline")
+			ply:Give("weapon_hg_smokenade_tpik")
+			ply:Give("weapon_medkit_sh")
+			local inv = ply:GetNetVar("Inventory", {}) or {}
+			inv["Weapons"] = inv["Weapons"] or {}
+			inv["Weapons"]["hg_flashlight"] = true
+			ply:SetNetVar("Inventory", inv)
+		end,
+	},
 	--==//
 	
 	--==\\
@@ -402,6 +435,7 @@ MODE.RoleChooseRoundTypes = {
 			["traitor_infiltrator_soe"] = true,
 			["traitor_shadow_soe"] = true,
 			["traitor_assasin_soe"] = true,
+			["traitor_anton_soe"] = true,
 			-- ["traitor_demoman_soe"] = true,
 		},
 		Professions = {
