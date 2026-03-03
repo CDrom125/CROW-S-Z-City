@@ -667,6 +667,85 @@ hg.armor.face = {
 		ScrappersSlot = "Armor",
 		voice_change = true,
 	},
+	["scubamask"] = {
+		"face",
+		"models/gasmasksfix/m40_drop.mdl",
+		Vector(3,-2,-0.5),
+		Angle(-90, 90, 0),
+		protection = 0,
+		bone = "ValveBiped.Bip01_Head1",
+		model = "models/gasmasksfix/m40_fix.mdl",
+		femPos = Vector(-1,0,0),
+		norender = true,
+		scale = 1,
+		femscale = 1,
+		effect = "Impact",
+		viewmaterial = Material("overlays/ba_gasmask"),
+		loopsound = "breath_normal",
+		voice_change = true,
+		restricted = {"head","ears"},
+		surfaceprop = 67,
+		mass = 0.8,
+		ScrappersSlot = "Armor",
+		loopsound = "breath_normal",
+		AfterPickup = function(ply)
+			if CLIENT then return end
+			if not IsValid(ply) or not ply.organism then return end
+			ply:SetNetVar("scuba_left", 300)
+			ply.ScubaLastMinute = nil
+			ply.ScubaFinal = nil
+
+			if ply.armors and ply.armors["ears"] then
+				hg.DropArmor(ply, ply.armors["ears"])
+			end
+
+			local id = "ScubaMaskO2_" .. ply:EntIndex()
+			timer.Remove(id)
+			timer.Create(id, 1, 0, function()
+				if not IsValid(ply) or not ply.organism then timer.Remove(id) return end
+				if ply.armors and ply.armors["face"] ~= "scubamask" then timer.Remove(id) return end
+
+				local inwater = ply:WaterLevel() >= 3
+				local left = ply:GetNetVar("scuba_left", 0) or 0
+
+				if inwater then
+					left = math.max(0, left - 1)
+					ply:SetNetVar("scuba_left", left)
+				end
+
+				if left <= 0 and inwater then
+					ply:Notify("Oxygen depleted.", 3, "scuba_countdown", 0, nil, Color(255, 100, 100))
+					timer.Remove(id)
+					ply.ScubaFinal = nil
+					return
+				end
+
+				local minutesLeft = math.floor(left / 60)
+
+				if inwater and minutesLeft <= 1 then
+					if not ply.ScubaFinal then
+						ply.ScubaFinal = true
+						ply:Notify("1 minute until i run out of oxygen..", 1.2, "scuba_countdown", 0, nil, Color(255, 80, 80))
+					end
+
+					ply:AddNaturalAdrenaline(0.5)
+				else
+					if inwater and minutesLeft ~= ply.ScubaLastMinute then
+						ply.ScubaLastMinute = minutesLeft
+						if minutesLeft > 0 and minutesLeft < 5 then
+							ply:Notify(minutesLeft .. " minutes until i run out of oxygen..", 1.2, "scuba_countdown", 0, nil, Color(220, 220, 255))
+						end
+					end
+				end
+
+				local org = ply.organism
+				if org and org.o2 and inwater then
+					org.o2[1] = org.o2.range
+					org.o2.curregen = org.o2.regen
+				end
+			end)
+		end,
+	},
 	["nightvision1"] = {
 		"face", -- "face"
 		"models/arctic_nvgs/nvg_gpnvg.mdl",
@@ -753,6 +832,7 @@ local armorNames = {
 	["mask1"] = "Balistic Mask",
 	["mask2"] = "M40 Gas Mask",
 	["mask3"] = "Welding Mask",
+	["scubamask"] = "Scuba Respirator",
 	["vest5"] = "6B13",
 	["nightvision1"] = "NVG GPNVG 18",
 	["vest6"] = "PACA Soft Armor",
@@ -778,6 +858,7 @@ local armorIcons = {
 	["mask1"] = "vgui/icons/ballisticmask",
 	["mask2"] = "vgui/icons/gasmask",
 	["mask3"] = "entities/ent_jack_gmod_ezarmor_weldingkill.png",
+	["scubamask"] = "vgui/icons/gasmask",
 	["ego_equalizer"] = "entities/ent_jack_gmod_ezarmor_hazmat.png",
 	["vest5"] = "entities/ent_jack_gmod_ezarmor_6b13flora.png",
 	["nightvision1"] = "vgui/icons/nvg",
