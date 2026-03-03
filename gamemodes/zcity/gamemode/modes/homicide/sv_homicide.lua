@@ -41,6 +41,7 @@ MODE.LootTable = {
 		{0.5,"weapon_adrenaline"},
 
 		{0.65,"ent_armor_mask2"},
+		{0.45,"ent_armor_scubamask"},
 		{0.27, "ent_armor_helmet2"},
 	}},
 	{20,{
@@ -137,6 +138,7 @@ MODE.LootTableStandard = {
 		{6,"weapon_painkillers"},
 		{5,"weapon_bloodbag"},
 		{4,"hg_flashlight"},
+		{1,"ent_armor_scubamask"},
 		{1,"weapon_matches"},--for dumbasses
 	}},
 	{35, {
