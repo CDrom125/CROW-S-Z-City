@@ -611,19 +611,36 @@ function SWEP:FireBullet()
 
 	if CLIENT then
 		if IsValid(ent) then
-			local head = ent:GetBoneMatrix(ent:LookupBone("ValveBiped.Bip01_Head1"))
-
-			if head then
-				headpos, headang = head:GetTranslation(), head:GetAngles()
-			else
-				headpos, headang = ent:GetPos(), ent:GetAngles()
+			local headIndex = ent:LookupBone("ValveBiped.Bip01_Head1")
+			if headIndex then
+				local head = ent:GetBoneMatrix(headIndex)
+				if head then
+					headpos, headang = head:GetTranslation(), head:GetAngles()
+				end
+			end
+			if not headpos or not headang then
+				if ent.IsPlayer and ent:IsPlayer() or ent.IsNPC and ent:IsNPC() then
+					headpos = ent.EyePos and ent:EyePos() or ent:GetPos()
+					headang = ent.EyeAngles and ent:EyeAngles() or ent:GetAngles()
+				else
+					headpos, headang = ent:GetPos(), ent:GetAngles()
+				end
 			end
 		end
 	else
 		if IsValid(ent) then
-			--headpos, headang = ent:GetBoneMatrix(ent:LookupBone("ValveBiped.Bip01_Spine2")):GetTranslation(), ent:GetBoneMatrix(ent:LookupBone("ValveBiped.Bip01_Head1")):GetAngles()--ent:GetBonePosition(ent:LookupBone("ValveBiped.Bip01_Head1"))
-			--headpos, headang = ent:GetBoneMatrix(ent:LookupBone("ValveBiped.Bip01_Head1")):GetTranslation(), ent:GetBoneMatrix(ent:LookupBone("ValveBiped.Bip01_Head1")):GetAngles()--ent:GetBonePosition(ent:LookupBone("ValveBiped.Bip01_Head1"))
-			headpos, headang = ent:GetBonePosition(ent:LookupBone("ValveBiped.Bip01_Head1"))
+			local headIndex = ent:LookupBone("ValveBiped.Bip01_Head1")
+			if headIndex then
+				headpos, headang = ent:GetBonePosition(headIndex)
+			end
+			if not headpos or not headang then
+				if ent.IsPlayer and ent:IsPlayer() or ent.IsNPC and ent:IsNPC() then
+					headpos = ent.EyePos and ent:EyePos() or ent:GetPos()
+					headang = ent.EyeAngles and ent:EyeAngles() or ent:GetAngles()
+				else
+					headpos, headang = ent:GetPos(), ent:GetAngles()
+				end
+			end
 			headpos = headpos + headang:Forward() * 3-- - dir * 5
 		end
 		--[[local ent = ents.Create("prop_physics")
