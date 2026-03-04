@@ -427,15 +427,19 @@ function hg._DeprecatedDoTPIK(ply, ent, rhmat, lhmat)
         local wrst = ent:LookupBone("ValveBiped.Bip01_R_Wrist")
         if wrst then
             local wmat = ent:GetBoneMatrix(wrst)
-            wmat:SetAngles(ply_r_forearm_angle)
-            ent:SetBoneMatrix(wrst, wmat)
+            if wmat then
+                wmat:SetAngles(ply_r_forearm_angle)
+                ent:SetBoneMatrix(wrst, wmat)
+            end
         end
 
         local wrst = ent:LookupBone("ValveBiped.Bip01_R_Ulna")
         if wrst then
             local wmat = ent:GetBoneMatrix(wrst)
-            wmat:SetAngles(ply_r_forearm_angle)
-            ent:SetBoneMatrix(wrst, wmat)
+            if wmat then
+                wmat:SetAngles(ply_r_forearm_angle)
+                ent:SetBoneMatrix(wrst, wmat)
+            end
         end
     end
 
@@ -566,15 +570,19 @@ function hg._DeprecatedDoTPIK(ply, ent, rhmat, lhmat)
         local wrst = ent:LookupBone("ValveBiped.Bip01_L_Wrist")
         if wrst then
             local wmat = ent:GetBoneMatrix(wrst)
-            wmat:SetAngles(ply_l_forearm_angle)
-            ent:SetBoneMatrix(wrst, wmat)
+            if wmat then
+                wmat:SetAngles(ply_l_forearm_angle)
+                ent:SetBoneMatrix(wrst, wmat)
+            end
         end
 
         local wrst = ent:LookupBone("ValveBiped.Bip01_L_Ulna")
         if wrst then
             local wmat = ent:GetBoneMatrix(wrst)
-            wmat:SetAngles(ply_l_forearm_angle)
-            ent:SetBoneMatrix(wrst, wmat)
+            if wmat then
+                wmat:SetAngles(ply_l_forearm_angle)
+                ent:SetBoneMatrix(wrst, wmat)
+            end
         end
     end
 
