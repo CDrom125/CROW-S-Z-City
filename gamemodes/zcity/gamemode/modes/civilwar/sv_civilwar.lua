@@ -59,27 +59,6 @@ end
 function MODE:RoundStart()
 end
 
-local function GiveRiflemanLoadout(ply)
-    ply:Give("weapon_hands_sh")
-    local gun = ply:Give("weapon_musket")
-    if IsValid(gun) and gun.GetPrimaryAmmoType and gun:GetPrimaryAmmoType() then
-        ply:GiveAmmo(0, gun:GetPrimaryAmmoType(), true)
-    end
-
-    for i=1,20 do
-        local ent = ents.Create("ent_ammo_metallicball")
-        if IsValid(ent) then
-            ent:SetPos(ply:GetPos() + Vector(0,0,5))
-            ent:Spawn()
-            ent:Use(ply)
-        end
-    end
-
-    ply:Give("weapon_bandage_sh")
-    ply:Give("weapon_bigbandage_sh")
-    ply:Give("weapon_hg_machete")
-end
-
 function MODE:GiveEquipment()
     local players = player.GetAll()
     table.Shuffle(players)
@@ -92,11 +71,11 @@ function MODE:GiveEquipment()
 
         if i <= half then
             ply:SetupTeam(0)
-            ply:SetPlayerClass("Rebel", {bNoEquipment = true})
+            ply:SetPlayerClass("confederates")
             zb.GiveRole(ply, "Confederate", Color(120, 60, 60))
         else
             ply:SetupTeam(1)
-            ply:SetPlayerClass("commanderforces", {bNoEquipment = true})
+            ply:SetPlayerClass("union")
             zb.GiveRole(ply, "Union", Color(60, 90, 150))
         end
 
@@ -104,8 +83,6 @@ function MODE:GiveEquipment()
         inv["Weapons"] = inv["Weapons"] or {}
         inv["Weapons"]["hg_sling"] = true
         ply:SetNetVar("Inventory", inv)
-
-        GiveRiflemanLoadout(ply)
 
         local hands = ply:Give("weapon_hands_sh")
         ply:SelectWeapon("weapon_hands_sh")
@@ -120,11 +97,28 @@ function MODE:GiveEquipment()
 end
 
 function MODE:GetTeamSpawn()
-    local t0 = zb.TranslatePointsToVectors(zb.GetMapPoints("CIVIL_TDM_CONFED"))
-    local t1 = zb.TranslatePointsToVectors(zb.GetMapPoints("CIVIL_TDM_UNION"))
+    local function pts(name)
+        return zb.TranslatePointsToVectors(zb.GetMapPoints(name))
+    end
+    local t0 = pts("CIVIL_TDM_CONFED")
+    local t1 = pts("CIVIL_TDM_UNION")
 
-    if (not t0 or #t0 == 0) and (not t1 or #t1 == 0) then
-        return zb.TranslatePointsToVectors(zb.GetMapPoints("HMCD_TDM_T")), zb.TranslatePointsToVectors(zb.GetMapPoints("HMCD_TDM_CT"))
+    if (not t0 or #t0 == 0) or (not t1 or #t1 == 0) then
+        local cri0 = pts("HMCD_CRI_T")
+        local cri1 = pts("HMCD_CRI_CT")
+        if (cri0 and #cri0 > 0) and (cri1 and #cri1 > 0) then
+            return cri0, cri1
+        end
+
+        local tdm0 = pts("HMCD_TDM_T")
+        local tdm1 = pts("HMCD_TDM_CT")
+        if (tdm0 and #tdm0 > 0) and (tdm1 and #tdm1 > 0) then
+            return tdm0, tdm1
+        end
+
+        local any = zb:GetRandomSpawn()
+        any = any and {any} or {}
+        return any, any
     end
 
     return t0, t1
