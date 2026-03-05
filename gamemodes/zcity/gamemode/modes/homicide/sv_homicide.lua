@@ -1055,6 +1055,7 @@ function MODE:CheckAlivePlayers()
 		[1] = {}
 	}
 	
+	local traitor_alive = false
 	for _, ply in player.Iterator() do
 		if(not ply:Alive())then
 			continue
@@ -1065,6 +1066,20 @@ function MODE:CheckAlivePlayers()
 		end
 		
 		if ply.isTraitor and not ply:GetNetVar("handcuffed",false) then
+			traitor_alive = true
+		end
+	end
+	
+	for _, ply in player.Iterator() do
+		if(not ply:Alive())then
+			continue
+		end
+		
+		if((not ply.isTraitor)and ply.organism and ply.organism.incapacitated)then
+			continue
+		end
+		
+		if (ply.isTraitor and not ply:GetNetVar("handcuffed",false)) or (traitor_alive and ply.isTraitorHelper and not ply:GetNetVar("handcuffed",false)) then
 			--print(ply)
 			AlivePlyTbl[1][#AlivePlyTbl[1] + 1] = ply
 		elseif(not ply.isPolice)then
