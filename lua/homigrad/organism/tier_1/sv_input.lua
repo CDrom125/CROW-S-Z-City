@@ -848,6 +848,38 @@ hook.Add("EntityTakeDamage", "homigrad-damage", function(ent, dmgInfo)
 		if bullet and hg.ammotypeshuy[bullet.AmmoType] and hg.ammotypeshuy[bullet.AmmoType].BulletSettings.tranquilizer then
 			org.tranquilizer = org.tranquilizer + dmgInfo:GetDamage()
 		end
+		if bullet and hg.ammotypeshuy[bullet.AmmoType] and hg.ammotypeshuy[bullet.AmmoType].BulletSettings.heartattack then
+			org.heartstop = true
+			if IsValid(org.owner) and org.owner.Notify then
+				org.owner:Notify("I feel heart palpitations...", 1, "heart_palpitations", 4)
+			end
+			local owner = org.owner
+			local entindex = org.entindex or (IsValid(owner) and owner:EntIndex()) or 0
+			timer.Simple(8, function()
+				if not IsValid(owner) then return end
+				if not owner.organism then return end
+				if owner.organism.entindex != entindex then return end
+				if not owner:Alive() then return end
+				owner.organism.lungsfunction = false
+			end)
+			org.heartattack_shots = (org.heartattack_shots or 0) + 1
+			if org.heartattack_shots == 2 then
+				org.needotrub = true
+				local tname = "heartattack_brain"..(org.entindex or 0)
+				if not timer.Exists(tname) then
+					local ticks = 12
+					timer.Create(tname, 1, ticks, function()
+						if not IsValid(owner) then timer.Remove(tname) return end
+						if not owner.organism then timer.Remove(tname) return end
+						if not owner:Alive() then timer.Remove(tname) return end
+						owner.organism.brain = math.min((owner.organism.brain or 0) + 0.06, 1)
+						if owner.organism.brain >= 0.7 then
+							timer.Remove(tname)
+						end
+					end)
+				end
+			end
+		end
 
 		if dmgInfo:IsDamageType(DMG_BULLET+DMG_BUCKSHOT+DMG_SLASH+DMG_BURN) then
 			org.fearadd = org.fearadd + 0.3
