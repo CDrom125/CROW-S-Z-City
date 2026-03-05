@@ -49,9 +49,9 @@ hook.Add("HUDPaint", "HMCD_SubRoles_Abilities", function()
 	
 	surface.SetFont("HomigradFontMedium")
 	
-	if(ply:Alive())then
+		if(ply:Alive())then
 		if(ply.isTraitor)then
-			if(ply.SubRole == "traitor_infiltrator" or ply.SubRole == "traitor_infiltrator_soe")then
+			if(ply.SubRole == "traitor_infiltrator" or ply.SubRole == "traitor_infiltrator_soe" or ply.SubRole == "traitor_ex_cia" or ply.SubRole == "traitor_ex_cia_soe")then
 				local text = "(HOLD)[ALT + E] Break Neck"
 				local tw, th = surface.GetTextSize(text)
 				local cx, cy = trace.HitPos:ToScreen().x, trace.HitPos:ToScreen().y
