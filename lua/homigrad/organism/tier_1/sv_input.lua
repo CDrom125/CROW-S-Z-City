@@ -850,6 +850,7 @@ hook.Add("EntityTakeDamage", "homigrad-damage", function(ent, dmgInfo)
 		end
 		if bullet and hg.ammotypeshuy[bullet.AmmoType] and hg.ammotypeshuy[bullet.AmmoType].BulletSettings.heartattack then
 			org.heartstop = true
+			local hrev = org.heartattack_rev or 0
 			if IsValid(org.owner) and org.owner.Notify then
 				org.owner:Notify("I feel heart palpitations...", 1, "heart_palpitations", 4)
 			end
@@ -858,6 +859,7 @@ hook.Add("EntityTakeDamage", "homigrad-damage", function(ent, dmgInfo)
 			timer.Simple(6, function()
 				if not IsValid(owner) then return end
 				if not owner.organism then return end
+				if (owner.organism.heartattack_rev or 0) ~= hrev then return end
 				if owner.organism.entindex != entindex then return end
 				if not owner:Alive() then return end
 				owner.organism.lungsfunction = false
@@ -869,11 +871,13 @@ hook.Add("EntityTakeDamage", "homigrad-damage", function(ent, dmgInfo)
 			timer.Simple(20, function()
 				if not IsValid(owner) then return end
 				if not owner.organism then return end
+				if (owner.organism.heartattack_rev or 0) ~= hrev then return end
 				if owner.organism.entindex != entindex then return end
 				if not owner:Alive() then return end
 				owner.organism.needotrub = true
 				local ticks = 18
 				timer.Create(tname, 1, ticks, function()
+					if (owner.organism and (owner.organism.heartattack_rev or 0) ~= hrev) then timer.Remove(tname) return end
 					if not IsValid(owner) then timer.Remove(tname) return end
 					if not owner.organism then timer.Remove(tname) return end
 					if not owner:Alive() then timer.Remove(tname) return end
@@ -1703,3 +1707,15 @@ end)
 --function PLAYER:ApplyPain(number)
 	--self.organism.painadd = self.organism.painadd + number
 --end
+
+hook.Add("Org Clear", "RemoveHeartAttack", function(org)
+	if not org then return end
+	org.heartattack_rev = (org.heartattack_rev or 0) + 1
+	local tname = "heartattack_brain"..(org.entindex or 0)
+	if timer.Exists(tname) then
+		timer.Remove(tname)
+	end
+	if org.heartstop then org.heartstop = false end
+	if org.lungsfunction == false then org.lungsfunction = true end
+	org.needotrub = false
+end)
