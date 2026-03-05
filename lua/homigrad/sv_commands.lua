@@ -202,6 +202,29 @@ if SERVER then
         end
     end, 2}
 
+    COMMANDS.pickhelper = {function(ply, args)
+        local mode = CurrentRound()
+        if not mode or mode.name ~= "hmcd" then
+            ply:ChatPrint("Available only in Homicide.")
+            return
+        end
+
+        if #args < 1 then
+            ply:ChatPrint("Usage: !pickhelper <name>")
+            return
+        end
+
+        local list = player.GetListByName(args[1])
+        local target = list and list[1]
+        if not IsValid(target) then
+            ply:ChatPrint("Player not found.")
+            return
+        end
+
+        mode.ForcedNextHelper = target:SteamID()
+        ply:ChatPrint("Will force traitor helper next round: " .. target:Name())
+    end, 2, "name"}
+
     COMMANDS.punish = {function(ply, args)
         if #args < 1 then
             ply:ChatPrint("Give me the name of this OwO .")
