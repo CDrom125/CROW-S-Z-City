@@ -89,7 +89,7 @@ hook.Add("PlayerPostThink", "HMCD_SubRoles_Abilities", function(ply)
 				end
 			end
 			
-			if(ply.SubRole == "traitor_assasin" or ply.SubRole == "traitor_assasin_soe")then
+			if(ply.SubRole == "traitor_assasin" or ply.SubRole == "traitor_assasin_soe" or ply:GetNetVar("helper_disarm", false))then
 				if(ply.Ability_NeckBreak)then
 					MODE.StopBreakingOtherNeck(ply)
 				end

@@ -83,7 +83,7 @@ hook.Add("HUDPaint", "HMCD_SubRoles_Abilities", function()
 				end
 			end
 			
-			if(ply.SubRole == "traitor_assasin" or ply.SubRole == "traitor_assasin_soe" or ply.PlayerClassName == "sc_infiltrator")then
+			if(ply.SubRole == "traitor_assasin" or ply.SubRole == "traitor_assasin_soe" or ply.PlayerClassName == "sc_infiltrator" or LocalPlayer():GetNetVar("helper_disarm", false))then
 				local aim_ent, other_ply, trace = MODE.GetPlayerTraceToOther(ply, nil, MODE.DisarmReach)
 				local text = "(HOLD)[ALT + E] Disarm"
 				local tw, th = surface.GetTextSize(text)

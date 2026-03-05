@@ -111,6 +111,7 @@ You are equipped with various weapons, poisons and explosives, grenades and your
 			ply:Give("weapon_adrenaline")
 			ply:Give("weapon_hg_smokenade_tpik")
 			ply:Give("weapon_medkit_sh")
+			ply.organism.stamina.max = 300
 			local inv = ply:GetNetVar("Inventory", {}) or {}
 			inv["Weapons"] = inv["Weapons"] or {}
 			inv["Weapons"]["hg_flashlight"] = true
@@ -164,7 +165,7 @@ You get a lot of poisons, motion dectector, and plenty more weapons, be silent a
 					ply:GiveAmmo(16, at, true)
 				end
 			end
-			ply.organism.stamina.max = 300
+			ply.organism.stamina.max = 280
 			ply:Give("weapon_traitor_poison4")
 			ply:Give("weapon_hg_motiontracker")
 			ply:Give("weapon_hg_shuriken")

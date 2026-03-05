@@ -29,6 +29,7 @@ net.Receive("HMCD_RoundStart",function()
 	local screen_time_is_default = net.ReadBool()
 	lply.SubRole = net.ReadString()
 	lply.MainTraitor = net.ReadBool()
+	lply.isTraitorHelper = net.ReadBool()
 	MODE.TraitorWord = net.ReadString()
 	MODE.TraitorWordSecond = net.ReadString()
 	MODE.TraitorExpectedAmt = net.ReadUInt(MODE.TraitorExpectedAmtBits)
@@ -309,6 +310,10 @@ function MODE:HUDPaint()
 
 	local Rolename = ( lply.isTraitor and MODE.TypeObjectives[MODE.Type].traitor.name ) or ( lply.isGunner and MODE.TypeObjectives[MODE.Type].gunner.name ) or MODE.TypeObjectives[MODE.Type].innocent.name
 	local ColorRole = ( lply.isTraitor and MODE.TypeObjectives[MODE.Type].traitor.color1 ) or ( lply.isGunner and MODE.TypeObjectives[MODE.Type].gunner.color1 ) or MODE.TypeObjectives[MODE.Type].innocent.color1
+	if lply.isTraitorHelper then
+		Rolename = "helping the Murderer."
+		ColorRole = MODE.TypeObjectives[MODE.Type].traitor.color1
+	end
 	ColorRole.a = 255 * fade
 
 	local color_role_innocent = MODE.TypeObjectives[MODE.Type].innocent.color1
@@ -380,6 +385,9 @@ function MODE:HUDPaint()
 	end
 
 	local Objective = ( lply.isTraitor and MODE.TypeObjectives[MODE.Type].traitor.objective ) or ( lply.isGunner and MODE.TypeObjectives[MODE.Type].gunner.objective ) or MODE.TypeObjectives[MODE.Type].innocent.objective
+	if lply.isTraitorHelper then
+		Objective = "Assist the murderer."
+	end
 
 	if(lply.SubRole and lply.SubRole != "")then
 		if(MODE.SubRoles[lply.SubRole] and MODE.SubRoles[lply.SubRole].Objective)then

@@ -819,6 +819,7 @@ function MODE:Intermission()
 		ply.isPolice = false
 		ply.isTraitor = false
 		ply.isGunner = false
+		ply.isTraitorHelper = false
 		ply.MainTraitor = false
 		ply.SubRole = nil
 		ply.Profession = nil
@@ -932,6 +933,7 @@ function MODE:Intermission()
 				net.WriteBool(false)	--; Round Started
 				net.WriteString("")	--; SubRole
 				net.WriteBool(ply.MainTraitor == true)	--; MainTraitor
+				net.WriteBool(ply.isTraitorHelper == true) -- Helper
 
 				if(ply.isTraitor)then
 					net.WriteString(MODE.TraitorWord)
@@ -1713,6 +1715,30 @@ function MODE.SpawnPlayers(spawn_with_subroles)
             player_count = player_count + 1
         end
     end
+	-- Select a helper when there are at least 7 players
+	if player_count >= 7 then
+		local chosen
+		if MODE.ForcedNextHelper then
+			for _, ply in player.Iterator() do
+				if ply:SteamID() == MODE.ForcedNextHelper and not ply.isTraitor and not ply.isGunner and ply:Team() ~= TEAM_SPECTATOR then
+					chosen = ply
+					break
+				end
+			end
+			MODE.ForcedNextHelper = nil
+		end
+		if not IsValid(chosen) then
+			for _, ply in RandomPairs(player.GetAll()) do
+				if ply:Team() == TEAM_SPECTATOR then continue end
+				if ply.isTraitor or ply.isGunner then continue end
+				chosen = ply
+				break
+			end
+		end
+		if IsValid(chosen) then
+			chosen.isTraitorHelper = true
+		end
+	end
 
     --= Профессии
     local professions = {}
@@ -1899,6 +1925,7 @@ function MODE.SpawnPlayers(spawn_with_subroles)
                     net.WriteBool(true)
                     net.WriteString(this_player.SubRole or "")
                     net.WriteBool(this_player.MainTraitor == true)
+					net.WriteBool(this_player.isTraitorHelper == true)
                     
                     if (this_player.isTraitor) then
                         net.WriteString(MODE.TraitorWord)
@@ -1956,6 +1983,79 @@ function MODE.SpawnPlayers(spawn_with_subroles)
         end)
     end
 end
+
+-- Give traitor helper loadouts after spawn is complete
+hook.Add("PlayerInitialSpawn", "HMCD_HelperEnsure", function(ply)
+	ply.isTraitorHelper = ply.isTraitorHelper or false
+end)
+
+hook.Add("PlayerSpawn", "HMCD_HelperLoadout", function(ply)
+	local mode = CurrentRound()
+	if not mode or mode.name ~= "hmcd" then return end
+	if not ply.isTraitorHelper then return end
+	timer.Simple(0, function()
+		if not IsValid(ply) or ply:Team() == TEAM_SPECTATOR then return end
+		local main_traitor, main_subrole
+		for _, p in player.Iterator() do
+			if p.isTraitor and p.MainTraitor then main_traitor = p break end
+		end
+		main_subrole = IsValid(main_traitor) and main_traitor.SubRole or ""
+		local t = MODE.Type
+		if t == "soe" then
+			if main_subrole == "traitor_ex_cia_soe" or main_subrole == "traitor_ex_cia" then
+				ply:Give("weapon_tranquilizer")
+				ply:Give("weapon_pocketknife")
+				ply:Give("weapon_handcuffs")
+				ply:Give("weapon_traitor_poison3")
+				ply:SetNetVar("helper_disarm", true)
+				if ply.organism and ply.organism.stamina then ply.organism.stamina.max = 280 end
+			elseif main_subrole == "traitor_anton_soe" then
+				local w = ply:Give("weapon_coltpithon")
+				if not IsValid(w) then w = ply:Give("weapon_revolver357") end
+				if IsValid(w) then
+					local at = w:GetPrimaryAmmoType()
+					if at and at ~= -1 then
+						ply:GiveAmmo(6, at, true)
+					end
+				end
+				ply:Give("weapon_buck200knife")
+				ply:Give("weapon_bandage_sh")
+				ply:SetNetVar("helper_disarm", false)
+				if ply.organism and ply.organism.stamina then ply.organism.stamina.max = 280 end
+			else
+				ply:Give("weapon_pocketknife")
+				ply:Give("weapon_handcuffs")
+				ply:Give("weapon_hg_shuriken")
+				ply:Give("weapon_p22")
+				ply:SetNetVar("helper_disarm", false)
+			end
+		else
+			if main_subrole == "traitor_ex_cia_soe" or main_subrole == "traitor_ex_cia" then
+				ply:Give("weapon_tranquilizer")
+				ply:Give("weapon_pocketknife")
+				ply:Give("weapon_handcuffs")
+				ply:Give("weapon_traitor_poison3")
+				ply:SetNetVar("helper_disarm", true)
+				if ply.organism and ply.organism.stamina then ply.organism.stamina.max = 280 end
+			else
+				ply:Give("weapon_pocketknife")
+				ply:Give("weapon_handcuffs")
+				ply:Give("weapon_hg_shuriken")
+				ply:SetNetVar("helper_disarm", false)
+			end
+		end
+		-- Ally notifications
+		timer.Simple(0.3, function()
+			if not IsValid(ply) then return end
+			if IsValid(main_traitor) then
+				local helperAppName = (ply.CurAppearance and ply.CurAppearance.AName) or ply:Name()
+				local traitorAppName = (main_traitor.CurAppearance and main_traitor.CurAppearance.AName) or main_traitor:Name()
+				ply:Notify("Your ally is "..traitorAppName.." ("..main_traitor:Name()..")", 20)
+				main_traitor:Notify("Your ally is "..helperAppName.." ("..ply:Name()..")", 20)
+			end
+		end)
+	end)
+end)
 
 hook.Add("PlayerSpawn", "HMCD_UpdateTraitorsList", function(ply)
 	if not ply.isTraitor then return end
