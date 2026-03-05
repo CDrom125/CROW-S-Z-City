@@ -2470,6 +2470,42 @@ hg.ammotypes = {
 			tranquilizer = true,
 		}
 	},
+	["heartattackdarts"] = {
+		name = "Heart Attack Darts",
+		dmgtype = DMG_CLUB,
+		tracer = TRACER_LINE,
+		plydmg = 0,
+		npcdmg = 0,
+		force = 50,
+		maxcarry = 30,
+		minsplash = 0,
+		maxsplash = 0,
+		TracerSetings = {
+			TracerBody = Material("particle/fire"),
+			TracerTail = Material("effects/laser_tracer"),
+			TracerHeadSize = 1.5,
+			TracerLength = 155,
+			TracerWidth = 5,
+			TracerColor = Color(37, 78, 36),
+			TracerTPoint1 = 0.25,
+			TracerTPoint2 = 1,
+			TracerSpeed = 3000,
+			NoSpin = true,
+		},
+		BulletSettings = {
+			Damage = 5,
+			Force = 10,
+			Penetration = 0,
+			Shell = "9x19",
+			Spread = Vector(0, 0, 0),
+			Speed = 650,
+			AirResistMul = 0.0002,
+			Diameter = 9,
+			Mass = 18,
+			Icon = matPistolAmmo,
+			heartattack = true,
+		}
+	},
 }
 
 local ammotypes = hg.ammotypes
@@ -2812,6 +2848,10 @@ local ammoents = {
 		Count = 1
 	},
 	["tranquilizerdarts"] = {
+		Material = "models/hmcd_ammobox_9",
+		Scale = 0.8,
+	},
+	["heartattackdarts"] = {
 		Material = "models/hmcd_ammobox_9",
 		Scale = 0.8,
 	},
