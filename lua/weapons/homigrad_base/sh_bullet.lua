@@ -1,4 +1,4 @@
-﻿AddCSLuaFile()
+AddCSLuaFile()
 --
 local surface_hardness = {
 	[MAT_METAL] = 1,
@@ -291,6 +291,43 @@ bulletHit = function(ply, tr, dmgInfo, bullet, Weapon)
 
 	if IsValid(ply) and IsValid(ply.FakeRagdoll) and tr.Entity == ply.FakeRagdoll and hands[hg.realPhysNum(ply.FakeRagdoll, tr.PhysicsBone)] then
 		return false, false
+	end
+	
+	do
+		local wep = Weapon
+		if not IsValid(wep) and IsValid(ply) and ply.GetActiveWeapon then
+			wep = ply:GetActiveWeapon()
+		end
+		if IsValid(wep) and wep:GetClass() == "weapon_useless" then
+			local target = tr.Entity
+			if IsValid(target) and target:IsPlayer() and target:Alive() then
+				local dir = bullet and bullet.Dir or ((tr.StartPos and tr.HitPos) and (tr.HitPos - tr.StartPos):GetNormalized()) or (-tr.Normal)
+				local pushMag = 350000
+				local push = dir * pushMag
+				-- Preload force so it applies on ragdoll creation
+				hg.AddForceRag(target, 0, push, 0.5)
+				hg.AddForceRag(target, 1, push, 0.5)
+				timer.Simple(0, function()
+					if IsValid(target) and target:IsPlayer() and target:Alive() then
+						hg.Fake(target)
+						-- Extra kick directly on the ragdoll to guarantee insane fling
+						timer.Simple(0, function()
+							if not IsValid(target) then return end
+							local rag = target.FakeRagdoll or target:GetNWEntity("FakeRagdoll")
+							if IsValid(rag) then
+								for i = 0, rag:GetPhysicsObjectCount() - 1 do
+									local phys = rag:GetPhysicsObjectNum(i)
+									if IsValid(phys) then
+										phys:ApplyForceCenter(push)
+										phys:SetVelocity(push:GetNormalized() * 2000)
+									end
+								end
+							end
+						end)
+					end
+				end)
+			end
+		end
 	end
 
 	--// uncomment to use default impact effects
