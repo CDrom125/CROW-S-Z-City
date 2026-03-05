@@ -117,6 +117,70 @@ You are equipped with various weapons, poisons and explosives, grenades and your
 			ply:SetNetVar("Inventory", inv)
 		end,
 	},
+	["traitor_ex_cia"] = {
+		Name = "ex-cia",
+		Description = [[The fruits of your labour in the CIA were undermined and they let you go, but they forgot to take away their prized heart attack gun from you, kill everyone who wronged you.
+You can break necks from behind.
+You get a lot of poisons, motion dectector, and plenty more weapons, be silent and effective.]],
+		Objective = "Use agency tools, neck-breaks and poisons to eliminate everyone.",
+		SpawnFunction = function(ply)
+			if not IsValid(ply) then return end
+			local gun = ply:Give("weapon_heartattack")
+			if IsValid(gun) then
+				local at = gun:GetPrimaryAmmoType()
+				if at and at ~= -1 then
+					ply:GiveAmmo(16, at, true)
+				end
+			end
+			ply.organism.stamina.max = 300
+			ply:Give("weapon_traitor_poison4")
+			ply:Give("weapon_hg_motiontracker")
+			ply:Give("weapon_hg_shuriken")
+			ply:Give("weapon_ducttape")
+			ply:Give("weapon_hg_jam")
+			ply:Give("weapon_traitor_poison_consumable")
+			ply:Give("weapon_traitor_poison3")
+			ply:Give("weapon_smallconsumable")
+			ply:Give("weapon_traitor_poison1")
+			ply:Give("weapon_buck200knife")
+			local inv = ply:GetNetVar("Inventory", {}) or {}
+			inv["Weapons"] = inv["Weapons"] or {}
+			inv["Weapons"]["hg_flashlight"] = true
+			ply:SetNetVar("Inventory", inv)
+		end,
+	},
+	["traitor_ex_cia_soe"] = {
+		Name = "ex-cia",
+		Description = [[The fruits of your labour in the CIA were undermined and they let you go, but they forgot to take away their prized heart attack gun from you, kill everyone who wronged you.
+You can break necks from behind.
+You get a lot of poisons, motion dectector, and plenty more weapons, be silent and effective.]],
+		Objective = "Use agency tools, neck-breaks and poisons to eliminate everyone.",
+		SpawnFunction = function(ply)
+			if not IsValid(ply) then return end
+			local gun = ply:Give("weapon_heartattack")
+			if IsValid(gun) then
+				local at = gun:GetPrimaryAmmoType()
+				if at and at ~= -1 then
+					ply:GiveAmmo(16, at, true)
+				end
+			end
+			ply.organism.stamina.max = 300
+			ply:Give("weapon_traitor_poison4")
+			ply:Give("weapon_hg_motiontracker")
+			ply:Give("weapon_hg_shuriken")
+			ply:Give("weapon_ducttape")
+			ply:Give("weapon_hg_jam")
+			ply:Give("weapon_traitor_poison_consumable")
+			ply:Give("weapon_traitor_poison3")
+			ply:Give("weapon_smallconsumable")
+			ply:Give("weapon_traitor_poison1")
+			ply:Give("weapon_buck200knife")
+			local inv = ply:GetNetVar("Inventory", {}) or {}
+			inv["Weapons"] = inv["Weapons"] or {}
+			inv["Weapons"]["hg_flashlight"] = true
+			ply:SetNetVar("Inventory", inv)
+		end,
+	},
 	--==//
 	
 	--==\\
@@ -381,6 +445,7 @@ MODE.RoleChooseRoundTypes = {
 			["traitor_infiltrator"] = true,
 			["traitor_chemist"] = true,
 			["traitor_assasin"] = true,
+			["traitor_ex_cia"] = true,
 			--["traitor_demoman"] = true, 	suicidal lunatic is now (NOT) available in standard! but it depends on which traitor class they chose.
 		},
 		Professions = {
@@ -407,6 +472,7 @@ MODE.RoleChooseRoundTypes = {
 			["traitor_default"] = true,
 			["traitor_infiltrator"] = true,
 			["traitor_chemist"] = true,
+			["traitor_ex_cia"] = true,
 			--["traitor_assasin"] = true,	there's no gunman so why have an assassin?
 			-- ["traitor_demoman"] = true,	having a shaid in gfz is op
 		},
@@ -436,6 +502,7 @@ MODE.RoleChooseRoundTypes = {
 			["traitor_shadow_soe"] = true,
 			["traitor_assasin_soe"] = true,
 			["traitor_anton_soe"] = true,
+			["traitor_ex_cia_soe"] = true,
 			-- ["traitor_demoman_soe"] = true,
 		},
 		Professions = {

@@ -25,7 +25,7 @@ util.AddNetworkString("HMCD_UpdateChemicalResistance")
 hook.Add("PlayerPostThink", "HMCD_SubRoles_Abilities", function(ply)
 	if(MODE.RoleChooseRoundTypes[MODE.Type])then
 		if(ply:Alive() and ply.organism and not ply.organism.otrub)then
-			if(ply.SubRole == "traitor_infiltrator" or ply.SubRole == "traitor_infiltrator_soe")then
+			if(ply.SubRole == "traitor_infiltrator" or ply.SubRole == "traitor_infiltrator_soe" or ply.SubRole == "traitor_ex_cia" or ply.SubRole == "traitor_ex_cia_soe")then
 				if(ply.Ability_Disarm)then
 					MODE.StopDisarmingOther(ply)
 				end
