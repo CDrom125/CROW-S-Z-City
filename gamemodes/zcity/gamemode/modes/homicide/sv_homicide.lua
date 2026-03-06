@@ -847,6 +847,11 @@ function MODE:Intermission()
 	local main_traitor = nil
 	local traitors = {}
 
+	if not MODE.ForcedNextMainTraitor and HMCD_ForcedNextMainTraitor then
+		MODE.ForcedNextMainTraitor = HMCD_ForcedNextMainTraitor
+		HMCD_ForcedNextMainTraitor = nil
+	end
+
 	if MODE.ForcedNextMainTraitor then
 		for _, ply in player.Iterator() do
 			if ply:SteamID() == MODE.ForcedNextMainTraitor and ply:Team() ~= TEAM_SPECTATOR and not ply.isTraitor then
@@ -1695,6 +1700,16 @@ function MODE.SpawnPlayers(spawn_with_subroles)
     local gunner_found = false
     local anton_selected = false
 
+	if not MODE.ForcedNextGunner and HMCD_ForcedNextGunner then
+		MODE.ForcedNextGunner = HMCD_ForcedNextGunner
+		HMCD_ForcedNextGunner = nil
+	end
+
+	if not MODE.ForcedNextHelper and HMCD_ForcedNextHelper then
+		MODE.ForcedNextHelper = HMCD_ForcedNextHelper
+		HMCD_ForcedNextHelper = nil
+	end
+
     if MODE.ForcedNextGunner then
         for _, ply in player.Iterator() do
             if ply:SteamID() == MODE.ForcedNextGunner and not ply.isTraitor and ply:Team() ~= TEAM_SPECTATOR and not ply.isGunner then
@@ -2018,7 +2033,17 @@ hook.Add("PlayerSpawn", "HMCD_HelperLoadout", function(ply)
 		local t = MODE.Type
 		if t == "soe" then
 			if main_subrole == "traitor_ex_cia_soe" or main_subrole == "traitor_ex_cia" then
-				ply:Give("weapon_tranquilizer")
+				local w = ply:Give("weapon_tranquilizer")
+				if IsValid(w) then
+					local at = w:GetPrimaryAmmoType()
+					if at and at ~= -1 then
+						if w.SetClip1 then
+							local maxclip = w.GetMaxClip1 and w:GetMaxClip1() or 2
+							w:SetClip1(math.min(2, maxclip > 0 and maxclip or 2))
+						end
+						ply:SetAmmo(0, at)
+					end
+				end
 				ply:Give("weapon_pocketknife")
 				ply:Give("weapon_handcuffs")
 				ply:Give("weapon_traitor_poison3")
@@ -2046,7 +2071,17 @@ hook.Add("PlayerSpawn", "HMCD_HelperLoadout", function(ply)
 			end
 		else
 			if main_subrole == "traitor_ex_cia_soe" or main_subrole == "traitor_ex_cia" then
-				ply:Give("weapon_tranquilizer")
+				local w = ply:Give("weapon_tranquilizer")
+				if IsValid(w) then
+					local at = w:GetPrimaryAmmoType()
+					if at and at ~= -1 then
+						if w.SetClip1 then
+							local maxclip = w.GetMaxClip1 and w:GetMaxClip1() or 2
+							w:SetClip1(math.min(2, maxclip > 0 and maxclip or 2))
+						end
+						ply:SetAmmo(0, at)
+					end
+				end
 				ply:Give("weapon_pocketknife")
 				ply:Give("weapon_handcuffs")
 				ply:Give("weapon_traitor_poison3")
