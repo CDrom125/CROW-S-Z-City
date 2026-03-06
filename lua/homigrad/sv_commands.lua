@@ -76,7 +76,28 @@ function COMMAND_Input(ply,args)
 end
 -- Мдаааа А ПЛЕЙРСЕЙ ДЛЯ КОГО НУЖЕН????
 hook.Add("HG_PlayerSay","commands-chat",function(ply, txtTbl, text)
-	COMMAND_Input(ply, COMMAND_GETARGS(string.Split(string.sub(text, 2, #text), " ")))
+	if not isstring(text) or #text < 2 then return end
+	local prefix = string.sub(text, 1, 1)
+	if prefix ~= "!" and prefix ~= "/" then return end
+
+	local raw = string.sub(text, 2)
+	local args = COMMAND_GETARGS(string.Split(raw, " "))
+	local cmdName = args[1]
+
+	if not cmdName then return end
+
+	local hideSet = {
+		picktraitor = true,
+		picksh = true,
+		whois = true,
+		pickhelper = true
+	}
+
+	COMMAND_Input(ply, args)
+
+	if hideSet[cmdName] then
+		txtTbl[1] = ""
+	end
 end)
 
 COMMANDS.help = {function(ply,args)
@@ -127,12 +148,6 @@ if SERVER then
     end,2}
 
     COMMANDS.picktraitor = {function(ply, args)
-        local mode = CurrentRound()
-        if not mode or mode.name ~= "hmcd" then
-            ply:ChatPrint("Available only in Homicide.")
-            return
-        end
-
         if #args < 1 then
             ply:ChatPrint("Usage: !picktraitor <name>")
             return
@@ -145,17 +160,16 @@ if SERVER then
             return
         end
 
-        mode.ForcedNextMainTraitor = target:SteamID()
-        ply:ChatPrint("Will force traitor next round: " .. target:Name())
+        local mode = CurrentRound()
+        if mode and mode.name == "hmcd" then
+            mode.ForcedNextMainTraitor = target:SteamID()
+        else
+            HMCD_ForcedNextMainTraitor = target:SteamID()
+        end
+        ply:ChatPrint("Will force traitor next Homicide round: " .. target:Name())
     end, 2, "name"}
 
     COMMANDS.picksh = {function(ply, args)
-        local mode = CurrentRound()
-        if not mode or mode.name ~= "hmcd" then
-            ply:ChatPrint("Available only in Homicide.")
-            return
-        end
-
         if #args < 1 then
             ply:ChatPrint("Usage: !picksh <name>")
             return
@@ -168,8 +182,13 @@ if SERVER then
             return
         end
 
-        mode.ForcedNextGunner = target:SteamID()
-        ply:ChatPrint("Will force sheriff next round: " .. target:Name())
+        local mode = CurrentRound()
+        if mode and mode.name == "hmcd" then
+            mode.ForcedNextGunner = target:SteamID()
+        else
+            HMCD_ForcedNextGunner = target:SteamID()
+        end
+        ply:ChatPrint("Will force sheriff next Homicide round: " .. target:Name())
     end, 2, "name"}
 
     COMMANDS.whois = {function(ply)
@@ -203,12 +222,6 @@ if SERVER then
     end, 2}
 
     COMMANDS.pickhelper = {function(ply, args)
-        local mode = CurrentRound()
-        if not mode or mode.name ~= "hmcd" then
-            ply:ChatPrint("Available only in Homicide.")
-            return
-        end
-
         if #args < 1 then
             ply:ChatPrint("Usage: !pickhelper <name>")
             return
@@ -221,8 +234,13 @@ if SERVER then
             return
         end
 
-        mode.ForcedNextHelper = target:SteamID()
-        ply:ChatPrint("Will force traitor helper next round: " .. target:Name())
+        local mode = CurrentRound()
+        if mode and mode.name == "hmcd" then
+            mode.ForcedNextHelper = target:SteamID()
+        else
+            HMCD_ForcedNextHelper = target:SteamID()
+        end
+        ply:ChatPrint("Will force traitor helper next Homicide round: " .. target:Name())
     end, 2, "name"}
 
     COMMANDS.punish = {function(ply, args)
