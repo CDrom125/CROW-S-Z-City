@@ -363,7 +363,7 @@ function SWEP:SetHandPos(noset)
 	if !IsValid(wm) then return end
 
 	local inv = ply:GetNetVar("Inventory",{})
-	local havekastet = inv["Weapons"] and inv["Weapons"]["hg_brassknuckles"]
+	local havekastet = (inv["Weapons"] and inv["Weapons"]["hg_brassknuckles"]) or self.IsBrassKnuckles
 
 	if havekastet then
 		self.model = IsValid(self.model) and self.model or ClientsideModel(self.KnuckleModel)
@@ -1356,7 +1356,7 @@ function SWEP:PrimaryAttack(forcespecial)
 
 	local inv = owner:GetNetVar("Inventory",{})
 	if not inv then return end
-	local havekastet = inv["Weapons"] and inv["Weapons"]["hg_brassknuckles"]
+	local havekastet = (inv["Weapons"] and inv["Weapons"]["hg_brassknuckles"]) or self.IsBrassKnuckles
 
 	if rand or (CLIENT and ((owner:GetTable().ChatGestureWeight >= 0.1) or twohands)) or havekastet then
 		side = "fists_right"
@@ -1516,8 +1516,9 @@ function SWEP:AttackFront(special_attack, rand)
 	local AimVec = owner:GetAimVector()
 	if IsValid(Ent) or (Ent and Ent.IsWorld and Ent:IsWorld()) then
 		local inv = owner:GetNetVar("Inventory",{})
-		local havekastet = inv["Weapons"] and inv["Weapons"]["hg_brassknuckles"]
-		local SelfForce, Mul = 150, 1 * (havekastet and 1.7 or 1)
+		local havekastet = (inv["Weapons"] and inv["Weapons"]["hg_brassknuckles"])
+		local haveadminkastet = (inv["Weapons"] and inv["Weapons"]["hg_admin_brassknuckles"])
+		local SelfForce, Mul = 150, 1 * (havekastet and 1.7 or 1) * (haveadminkastet and 3 or 1)
 
 		if clawClasses[owner.PlayerClassName] and hgIsDoor(Ent) then
 			if (Ent.Clawed or 0) > (isZomb and math.random(6, 12) or math.random(15, 30)) then
@@ -1579,6 +1580,11 @@ function SWEP:AttackFront(special_attack, rand)
 
 		if isZomb then
 			self.DamageMul = special_attack and 1.6 or 3
+		end
+
+		if haveadminkastet then
+			sound.Play("fah.wav", HitPos, 100, math.random(90, 110))
+			self.DamageMul = (self.DamageMul or 1) * 2 -- Double damage again on top of Mul
 		end
 
 		local DamageAmt = (math.random(3, 5) * (special_attack and 3 or 1)) * (self.DamageMul or 1)
@@ -1645,9 +1651,14 @@ function SWEP:AttackFront(special_attack, rand)
 
 		if IsValid(Phys) then
 			if Ent:IsPlayer() then
-				Ent:SetVelocity(AimVec * SelfForce * 1.5 * (owner.organism.superfighter and 2 or 1) * (isZomb and 4 or 1) * (1 + owner.organism.berserk * 5))
+				if haveadminkastet then
+					Ent:SetGroundEntity(nil)
+					Ent:SetVelocity(AimVec * SelfForce * 1.5 * 50 + Vector(0,0,300))
+				else
+					Ent:SetVelocity(AimVec * SelfForce * 1.5 * (owner.organism.superfighter and 2 or 1) * (isZomb and 4 or 1) * (1 + owner.organism.berserk * 5))
+				end
 			end
-			Phys:ApplyForceOffset(AimVec * 5000 * Mul * (isZomb and 3 or 1), HitPos)
+			Phys:ApplyForceOffset(AimVec * 5000 * Mul * (isZomb and 3 or 1) * (haveadminkastet and 10 or 1), HitPos)
 			owner:SetVelocity(AimVec * SelfForce * .8 * (owner.organism.superfighter and 2 or 1) * (isZomb and 2 or 1) * (1 + owner.organism.berserk / 10))
 		end
 	end
