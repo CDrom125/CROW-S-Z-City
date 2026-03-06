@@ -411,6 +411,10 @@ if CLIENT then
 		if inventory["Weapons"]["hg_brassknuckles"] then
 			tbl["hg_brassknuckles"] = inventory["Weapons"]["hg_brassknuckles"]
 		end
+
+		if inventory["Weapons"]["hg_admin_brassknuckles"] then
+			tbl["hg_admin_brassknuckles"] = inventory["Weapons"]["hg_admin_brassknuckles"]
+		end
 	
 		if not organism.otrub and table.Count(tbl) > 0 then
 			hg.radialOptions = hg.radialOptions or {}
@@ -477,6 +481,10 @@ if CLIENT then
 
 		if inventory["Weapons"]["hg_brassknuckles"] then
 			tblcpy["hg_brassknuckles"] = inventory["Weapons"]["hg_brassknuckles"]
+		end
+
+		if inventory["Weapons"]["hg_admin_brassknuckles"] then
+			tblcpy["hg_admin_brassknuckles"] = inventory["Weapons"]["hg_admin_brassknuckles"]
 		end
 
 		return tblcpy
@@ -555,6 +563,7 @@ if CLIENT then
 			frame.scroll = scroll
 			
 			for k, v in pairs(tblcpy) do
+				local originalK = k
 				if !hg.armorNames[v] and isnumber(k) then continue end
 				//if hg.armor[v][k].nodrop then continue end
 				local but = vgui.Create("DButton")
@@ -582,7 +591,7 @@ if CLIENT then
 				if hg.armorIcons[v] then img:SetImage( hg.armorIcons[v] ) end
 	
 				but.DoClick = function()
-					dropArmor(isnumber(k) and v or k)
+					dropArmor(isnumber(originalK) and v or originalK)
 				end
 	
 				scroll:AddItem(but)

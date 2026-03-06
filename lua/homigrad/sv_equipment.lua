@@ -40,6 +40,10 @@ net.Receive("hg_drop_equipment", function(len, ply)
         ply:ConCommand("hg_dropkastet")
     end
 
+    if equipment == "hg_admin_brassknuckles" then
+        ply:ConCommand("hg_dropadminbrassknuckles")
+    end
+
     if not ply.organism.canmove then return end
 
     hg.DropArmor(ply, equipment)

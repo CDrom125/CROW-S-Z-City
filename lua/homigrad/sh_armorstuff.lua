@@ -843,6 +843,8 @@ local armorNames = {
 	["ego_equalizer"] = "[HE] Equalizer",
 	["helmet6"] = "SWAT Balistic Helmet",
 	["gordon_helmet"] = "HEV Suit Helmet",
+	["hg_brassknuckles"] = "Brass Knuckles",
+	["hg_admin_brassknuckles"] = "Admin Brass Knuckles",
 }
 hg.armorNames = armorNames
 local armorIcons = {
@@ -868,6 +870,8 @@ local armorIcons = {
 	["helmet5"] = "entities/ent_jack_gmod_ezarmor_achhcblack.png",
 	["vest8"] = "vgui/icons/armor01.png",
 	["helmet6"] = "vgui/icons/helmet.png",
+	["hg_brassknuckles"] = "vgui/inventory/weapon_brassknuckles",
+	["hg_admin_brassknuckles"] = "vgui/inventory/weapon_brassknuckles",
 }
 hg.armorIcons = armorIcons
 

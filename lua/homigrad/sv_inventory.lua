@@ -34,6 +34,7 @@ function hg.RenewInv(ply, isDead)
 
     local sling = inv.Weapons["hg_sling"] -- Вот бы все это автоматизировать
     local kastet = inv.Weapons["hg_brassknuckles"]
+    local adminkastet = inv.Weapons["hg_admin_brassknuckles"]
     local flashlight = inv.Weapons["hg_flashlight"]
 
     inv.Weapons = {}
@@ -66,6 +67,7 @@ function hg.RenewInv(ply, isDead)
 
     inv.Weapons["hg_sling"] = sling
     inv.Weapons["hg_brassknuckles"] = kastet
+    inv.Weapons["hg_admin_brassknuckles"] = adminkastet
     inv.Weapons["hg_flashlight"] = flashlight
     inv.Ammo = ply:GetAmmo()
     inv.Armor = inv.Armor or {}

@@ -679,6 +679,24 @@ concommand.Add("hg_dropkastet",function(ply)
 	ply:DoAnimationEvent(ACT_GMOD_GESTURE_MELEE_SHOVE_1HAND)
 end)
 
+concommand.Add("hg_dropadminbrassknuckles",function(ply)
+	if not ply:Alive() then return end
+	local inv = ply:GetNetVar("Inventory")
+	if not inv["Weapons"] or not inv["Weapons"]["hg_admin_brassknuckles"] then return end
+	local ent = ents.Create("hg_admin_brassknuckles")
+	ent:SetPos(ply:EyePos())
+	ent:SetAngles(ply:EyeAngles())
+	ent:Spawn()
+	ent:EmitSound("npc/footsteps/softshoe_generic6.wav", 75, math.random(90, 110), 1, CHAN_ITEM)
+	local phys = ent:GetPhysicsObject()
+	if IsValid(phys) then
+		phys:ApplyForceCenter(ply:GetAimVector() * 200 * phys:GetMass())
+	end
+	inv["Weapons"]["hg_admin_brassknuckles"] = nil
+	ply:SetNetVar("Inventory",inv)
+	ply:DoAnimationEvent(ACT_GMOD_GESTURE_MELEE_SHOVE_1HAND)
+end)
+
 hook.Add("SetupMove", "SV_SYNC", function(ply)
 	if not ply.sync then
 		ply.sync = true
