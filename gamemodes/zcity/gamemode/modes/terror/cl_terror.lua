@@ -24,7 +24,8 @@ net.Receive("terror_start", function()
     -- Play start music
     sound.PlayFile("sound/terrorthreat.wav", "noplay", function(station)
         if IsValid(station) then
-            station:SetVolume(0.5)
+            local vol = GetConVar("snd_musicvolume"):GetFloat() or 1
+            station:SetVolume(0.5 * vol)
             station:Play()
         end
     end)
@@ -36,7 +37,8 @@ net.Receive("terror_swat_arrival", function()
     -- Play SWAT music
     sound.PlayFile("sound/swatmusic.wav", "noplay", function(station)
         if IsValid(station) then
-            station:SetVolume(1.0)
+            local vol = GetConVar("snd_musicvolume"):GetFloat() or 1
+            station:SetVolume(1.0 * vol)
             station:Play()
         end
     end)

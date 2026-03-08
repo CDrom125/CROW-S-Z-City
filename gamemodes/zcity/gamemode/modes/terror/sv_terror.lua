@@ -132,11 +132,21 @@ function MODE:GiveEquipment()
     local police = team.GetPlayers(2)
     local innocents = team.GetPlayers(3)
     
-    -- Terrorist Loadout
+    -- Spawn Points
+    local tSpawns, ctSpawns = self:GetTeamSpawn()
+    local tSpawn = (tSpawns and #tSpawns > 0) and tSpawns[math.random(#tSpawns)] or zb:GetRandomSpawn()
+    local ctSpawn = (ctSpawns and #ctSpawns > 0) and ctSpawns[math.random(#ctSpawns)] or zb:GetRandomSpawn()
+
+    -- Terrorist Loadout & Spawn
     local rgdGiven = false
     local iedGiven = false
     
-    for _, ply in ipairs(terrorists) do
+    for i, ply in ipairs(terrorists) do
+        -- Set Position (Grouped)
+        if tSpawn then
+            ply:SetPos(hg.tpPlayer(tSpawn, ply, i, 0))
+        end
+
         ply:Give("weapon_hands_sh")
         local ak = ply:Give("weapon_ak74")
         if IsValid(ak) then ply:GiveAmmo(60, ak:GetPrimaryAmmoType(), true) end
@@ -157,8 +167,13 @@ function MODE:GiveEquipment()
         end
     end
     
-    -- Police Loadout
-    for _, ply in ipairs(police) do
+    -- Police Loadout & Spawn
+    for i, ply in ipairs(police) do
+        -- Set Position (Grouped)
+        if ctSpawn then
+            ply:SetPos(hg.tpPlayer(ctSpawn, ply, i, 0))
+        end
+
         ply:Give("weapon_hands_sh")
         hg.AddArmor(ply, "ent_armor_vest2")
         hg.AddArmor(ply, "ent_armor_helmet3")
@@ -174,8 +189,12 @@ function MODE:GiveEquipment()
         ply:Give("weapon_hg_tonfa")
     end
     
-    -- Innocent Loadout (Default)
+    -- Innocent Loadout & Spawn (Random)
     for _, ply in ipairs(innocents) do
+        -- Set Position (Random)
+        local randSpawn = zb:GetRandomSpawn(ply)
+        if randSpawn then ply:SetPos(randSpawn) end
+
         ply:Give("weapon_hands_sh")
     end
 end
