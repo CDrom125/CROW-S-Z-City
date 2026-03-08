@@ -21,12 +21,19 @@ local teams = {
 }
 
 net.Receive("terror_start", function()
+    -- Stop previous music if playing
+    if IsValid(MODE.StartMusic) then MODE.StartMusic:Stop() end
+    if IsValid(MODE.SwatMusic) then MODE.SwatMusic:Stop() end
+
     -- Play start music
-    sound.PlayFile("sound/terrorthreat.wav", "noplay", function(station)
+    sound.PlayFile("sound/terrorthreat.wav", "noplay", function(station, errID, errName)
         if IsValid(station) then
+            MODE.StartMusic = station
             local vol = GetConVar("snd_musicvolume"):GetFloat() or 1
             station:SetVolume(0.5 * vol)
             station:Play()
+        else
+            print("[Terrorist Threat] Failed to play start music: sound/terrorthreat.wav", errID, errName)
         end
     end)
     
@@ -34,12 +41,18 @@ net.Receive("terror_start", function()
 end)
 
 net.Receive("terror_swat_arrival", function()
+    -- Stop start music if it's still playing
+    if IsValid(MODE.StartMusic) then MODE.StartMusic:Stop() end
+
     -- Play SWAT music
-    sound.PlayFile("sound/swatmusic.wav", "noplay", function(station)
+    sound.PlayFile("sound/swatmusic.wav", "noplay", function(station, errID, errName)
         if IsValid(station) then
+            MODE.SwatMusic = station
             local vol = GetConVar("snd_musicvolume"):GetFloat() or 1
             station:SetVolume(1.0 * vol)
             station:Play()
+        else
+            print("[Terrorist Threat] Failed to play SWAT music: sound/swatmusic.wav", errID, errName)
         end
     end)
     
