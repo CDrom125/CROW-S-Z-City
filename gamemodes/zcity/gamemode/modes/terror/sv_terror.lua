@@ -221,14 +221,23 @@ function MODE:RoundThink()
         local benelliGiven = false
         
         for i, ply in ipairs(deadPlayers) do
-            ply:Spawn()
             ply:SetTeam(2) -- Join Police team
             ply:SetPlayerClass("swat")
+            ply:Spawn()
             zb.GiveRole(ply, "SWAT", Color(0, 0, 200))
             
-            -- TP to CT spawn
+            -- TP to CT spawn or random spawn
+            local spawnPos
             if ctSpawns and #ctSpawns > 0 then
-                ply:SetPos(ctSpawns[math.random(#ctSpawns)])
+                spawnPos = ctSpawns[math.random(#ctSpawns)]
+            end
+            
+            if not spawnPos then
+                spawnPos = zb:GetRandomSpawn(ply)
+            end
+            
+            if spawnPos then
+                ply:SetPos(spawnPos)
             end
             
             -- Loadout

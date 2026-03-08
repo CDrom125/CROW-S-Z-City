@@ -26,14 +26,14 @@ net.Receive("terror_start", function()
     if IsValid(MODE.SwatMusic) then MODE.SwatMusic:Stop() end
 
     -- Play start music
-    sound.PlayFile("sound/terrorthreat.wav", "noplay", function(station, errID, errName)
+    sound.PlayFile("sound/start.wav", "noplay", function(station, errID, errName)
         if IsValid(station) then
             MODE.StartMusic = station
             local vol = GetConVar("snd_musicvolume"):GetFloat() or 1
             station:SetVolume(0.5 * vol)
             station:Play()
         else
-            print("[Terrorist Threat] Failed to play start music: sound/terrorthreat.wav", errID, errName)
+            print("[Terrorist Threat] Failed to play start music: sound/start.wav", errID, errName)
         end
     end)
     
