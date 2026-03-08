@@ -130,7 +130,7 @@ You get a lot of poisons, motion dectector, and plenty more weapons, be silent a
 			if IsValid(gun) then
 				local at = gun:GetPrimaryAmmoType()
 				if at and at ~= -1 then
-					ply:GiveAmmo(16, at, true)
+					--ply:GiveAmmo(16, at, true)
 				end
 			end
 			ply.organism.stamina.max = 300
@@ -162,7 +162,7 @@ You get a lot of poisons, motion dectector, and plenty more weapons, be silent a
 			if IsValid(gun) then
 				local at = gun:GetPrimaryAmmoType()
 				if at and at ~= -1 then
-					ply:GiveAmmo(16, at, true)
+					--ply:GiveAmmo(16, at, true)
 				end
 			end
 			ply.organism.stamina.max = 280

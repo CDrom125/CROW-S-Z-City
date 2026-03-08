@@ -69,3 +69,25 @@ function MODE:HUDPaint()
     local desc = teams[team_] and teams[team_].objective or ""
     draw.SimpleText(desc, "ZB_HomicideMedium", sw * 0.5, sh * 0.15, RoleColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 end
+
+net.Receive("civilwar_roundend", function()
+    local winner = net.ReadInt(4)
+    local text = "Round Draw"
+    local col = Color(255, 255, 255)
+
+    if winner == 0 then
+        text = "Confederates Win!" -- Team 0
+        col = Color(150, 60, 60)
+    elseif winner == 1 then
+        text = "Union Wins!" -- Team 1
+        col = Color(60, 90, 150)
+    end
+
+    hook.Add("HUDPaint", "CivilWarEndScreen", function()
+        draw.SimpleText(text, "ZB_HomicideLarge", ScrW() * 0.5, ScrH() * 0.4, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    end)
+
+    timer.Simple(10, function()
+        hook.Remove("HUDPaint", "CivilWarEndScreen")
+    end)
+end)

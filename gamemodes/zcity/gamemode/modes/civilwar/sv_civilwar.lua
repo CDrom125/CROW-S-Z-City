@@ -45,8 +45,11 @@ function MODE:CheckAlivePlayers()
 end
 
 function MODE:EndRound()
+    local endround, winner = zb:CheckWinner(self:CheckAlivePlayers())
+    
     timer.Simple(2,function()
         net.Start("civilwar_roundend")
+        net.WriteInt(winner or 0, 4)
         net.Broadcast()
     end)
 end
