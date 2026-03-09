@@ -386,6 +386,31 @@ Despite being zombie, still bears appearance of a normal human.],
 			-- ply:SetNetVar("Inventory", inv)
 		end,
 	}, --]]
+	
+	["traitor_big_iron_soe"] = {
+		Name = "Big Iron",
+		Description = "I don't speak German, i speak MONEY!",
+		Objective = "Kill everyone",
+		SpawnFunction = function(ply)
+			if not IsValid(ply) then return end
+			local rev = ply:Give("weapon_revolversh12")
+			if IsValid(rev) then
+				ply:GiveAmmo(5, rev:GetPrimaryAmmoType(), true)
+			end
+			
+			ply:Give("weapon_sogknife")
+			ply:Give("weapon_hg_rgd_tpik")
+			ply:Give("weapon_traitor_ied")
+			ply:Give("weapon_bandage_sh")
+			ply:Give("weapon_hg_jam")
+			ply:Give("weapon_bombvest")
+			
+			ply.organism.stamina.max = 220
+			local inv = ply:GetNetVar("Inventory", {})
+			inv["Weapons"]["hg_flashlight"] = true
+			ply:SetNetVar("Inventory", inv)
+		end,
+	},
 	--=//
 }
 --//

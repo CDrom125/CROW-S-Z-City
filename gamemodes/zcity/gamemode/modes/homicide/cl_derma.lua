@@ -74,7 +74,7 @@ function PANEL:Construct()
 	
 	local text_description = vgui.Create("RichText", self)
 	text_description.ZRolePanel = self
-	text_description:SetText(self.Description)
+	text_description:SetText(self.Description or "No description available.")
 	text_description:SetSkin(hg.GetMainSkin())
 	text_description:Dock(FILL)
 	text_description.PerformLayout = function(sel)
@@ -169,6 +169,7 @@ function PANEL:Construct()
 	-- hscroll:InvalidateParent(false)
 	for role_id, _ in pairs(self.RolesIDsList) do
 		local role_info = MODE.SubRoles[role_id]
+		if not role_info then continue end
 		local role_name = role_info.Name
 		local role_description = role_info.Description
 		
