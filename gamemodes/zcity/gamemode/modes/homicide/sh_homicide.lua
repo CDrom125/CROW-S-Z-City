@@ -504,6 +504,7 @@ MODE.RoleChooseRoundTypes = {
 			["traitor_assasin_soe"] = true,
 			["traitor_anton_soe"] = true,
 			["traitor_ex_cia_soe"] = true,
+			["traitor_big_iron_soe"] = true,
 			-- ["traitor_demoman_soe"] = true,
 		},
 		Professions = {
